@@ -86,3 +86,5 @@ SELECT COUNT(*) FROM assassins_contracts;
 INSERT INTO targets (target_name, target_location, target_photo, target_security)
 VALUES
 ('Snake Plissken', 'New York', 'https://imgur.com/gallery/kEuzp', 5);
+
+SELECT * FROM targets;
