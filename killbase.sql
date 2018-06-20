@@ -6,7 +6,7 @@ CREATE DATABASE killbase;
 
 CREATE TABLE assassins (id serial primary key, full_name text, code_names text, weapon text, age integer, price integer, rating numeric (2,1), kills integer);
 
-INSERT INTO assassins (full_name, code_names, weapon, age, price, rating, kills) VALUES ('Alexander Duggan', 'The Jackal', 'Sniper Rifle', 31, 34, 45, 7.5, 28);
+INSERT INTO assassins (full_name, code_names, weapon, age, price, rating, kills) VALUES ('Alexander Duggan', 'The Jackal', 'Sniper Rifle', 31, 45, 7.5, 28);
 INSERT INTO assassins (full_name, code_names, weapon, age, price, rating, kills) VALUES ('Anton Chigurh', 'Old Man', 'Pneumatic bolt gun', 52, 40, 9, 72);
 INSERT INTO assassins (code_names, weapon, age, price, rating, kills) VALUES ('Ghost Dog', 'Pistol', 28, 20, 6.5, 35);
 INSERT INTO assassins (full_name, weapon, age, price, rating, kills) VALUES ('Jason Bourne', 'Parkour', 27, 25, 7, 48);
@@ -38,15 +38,15 @@ INSERT INTO contracts (client_id, budget, target_id, completed, assassins_id) VA
 INSERT INTO contracts (client_id, budget, target_id, completed, assassins_id) VALUES (4, 25, 4, false, null);
 INSERT INTO contracts (client_id, budget, target_id, completed, assassins_id) VALUES (5, 10, 5, false, null);
 
-CREATE TABLE assassins_contracts (assassians_id integer references assassins (id), contract_id integer references contracts (id));
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (6,1);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (1,2);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (5,2);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (7,3);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (9,5);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (6,4);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (8,3);
-INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (3,1);
+CREATE TABLE assassins_contracts (assassins_id integer references assassins (id), contract_id integer references contracts (id));
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (6, 1);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (1, 2);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (5, 2);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (7, 3);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (9, 5);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (6, 4);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (8, 3);
+INSERT INTO assassins_contracts (assassins_id, contract_id) VALUES (3, 1);
 
 SELECT * FROM assassins;
 SELECT * FROM clients;
