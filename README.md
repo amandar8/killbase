@@ -31,6 +31,8 @@ Targets have:
 ## Your tasks:
 
 1) Create an entity relationship diagram for the tables in the Killbase database.
+
+CREATE TABLE Assassins
 2) Create the killbase database, and write the SQL to create all the tables.
 3) Write the SQL to seed the database with the following information:
 
@@ -63,14 +65,19 @@ Targets have:
 ## Exercises
 
 1) Select all the assassins, sorted by number of kills.
+SELECT * FROM Assassins ORDER BY kills DESC
 
 2) Select all of the assassins older than 30 years old.
+SELECT * FROM Assassins WHERE age>30;
 
 3) Select all of the contracts that can afford to pay Nikita Mears. (Budget >= her price)
+SELECT * FROM Contracts WHERE budget>=30;
 
 4) Count the number of assassins that are capable of taking out Norman Stansfield. (Their rating >= his security level)
+SELECT * FROM Assassins WHERE rating>=7;
 
 5) Get the total amount it would require to hire every available assassin.
+SELECT SUM(price) FROM Assassins;
 
 6) Assign the following jobs to these assassins:
   * Jules Winnfield -> Butch Coolidge
@@ -80,11 +87,52 @@ Targets have:
   * Pickle Rick -> Sonny Valerio
   * Jules Winnfield -> Santino D'Antonio
   * Nikita Mears -> Norman Stansfield
-  * Ghost Dog -> Butch Coolidge
+  * Ghost Dog -> Butch Coolidalge
+
+CREATE TABLE assassins_contracts (Assassins_id integer references Assassins (id), Contracts_id integer references contracts (id));
+
+assassins_id |  full_name     
+--------------+--------------
+1 | Alexander Duggan
+2 | Anton Chigurh
+3 |
+4 | Jason Bourne
+5 | John Wick
+6 | Jules Winnfield
+7 | Leon
+8 | Nikita Mears
+9 | Pickle Rick
+
+assassins_id |  code_names        
+--------------+-------------
+1 | The Jackal
+2 | Old Man
+3 | Ghost Dog
+4 |
+5 | Baba Yaga
+6 |
+7 | The Professional
+8 | Nikita, La Femme Nikita
+9 | Solenya
+
+contracts_id |  target_name    
+--------------+---------------
+1 | Butch Coolidge
+2 | The Jaguar
+3 | Norman Stansfield
+4 | Santino D'Antonio
+5 | Sonny Valerio
+
+
+select * from assassins inner join assassins_contracts on assassins.id=assassins_contracts.assassins_id inner join contracts on assassins_contracts.contracts_id=contracts.id;
+
+select (assassins.full_name, contracts.client_name, contracts.target_name) from assassins inner join assassins_contracts on assassins.id=assassins_contracts.assassins.id;
 
 7) Count the number of currently contracted assassins.
+select count(*) from Assassins_Contracts;
 
 8) Find the lowest total cost to complete all assigned contracts.
+
 
 9) Add a new contract: Snake Plissken, New York, (find a photo), security 5, budget 35, Client is Marcellus Wallace.
 
