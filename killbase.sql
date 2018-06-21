@@ -5,7 +5,7 @@ CREATE DATABASE killbase;
 \c killbase
 
 --create assassins table
-CREATE TABLE assassins (id serial primary key, full_name text, weapon text, age integer, price integer, rating numeric (2,1), kills integer);
+CREATE TABLE assassins (id serial primary key, full_name text, weapon text, age integer, price integer, rating numeric (3,1), kills integer);
 INSERT INTO assassins (id, full_name, weapon, age, price, rating, kills)
 VALUES
 (DEFAULT, 'Alexander Duggan','Sniper Rifle', 31, 45, 7.5, 28),
@@ -19,7 +19,7 @@ VALUES
 (DEFAULT, 'Pickle Rick', 'Lasers and office supplies', 60, 0, 8, 24);
 
 --create code_names table
-CREATE TABLE code_names (assassins_id integer references assassins (id), code_names text);
+CREATE TABLE code_names (assassins_id integer references assassins (id) ON DELETE CASCADE, code_names text);
 INSERT INTO code_names (assassins_id, code_names)
 VALUES
 (1, 'The Jackal'),
@@ -52,7 +52,7 @@ VALUES
 (DEFAULT, 'Sonny Valerio', 'Queens', 'https://goo.gl/8DHYUS', 4);
 
 --create contracts table
-CREATE TABLE contracts (id serial primary key, client_id integer references clients (id), budget integer, target_id integer references targets (id), completed boolean, assassins_id integer references assassins (id));
+CREATE TABLE contracts (id serial primary key, client_id integer references clients (id), budget integer, target_id integer references targets (id) ON DELETE CASCADE, completed boolean, assassins_id integer references assassins (id) ON DELETE CASCADE);
 INSERT INTO contracts (id, client_id, budget, target_id, completed, assassins_id)
 VALUES
 (DEFAULT, 1, 40, 1, false, null),
@@ -61,8 +61,8 @@ VALUES
 (DEFAULT, 4, 25, 4, false, null),
 (DEFAULT, 5, 10, 5, false, null);
 
---cAssign the following jobs to these assassins:
-CREATE TABLE assassins_contracts (assassins_id integer references assassins (id), contract_id integer references contracts (id));
+--Assign the following jobs to these assassins:
+CREATE TABLE assassins_contracts (assassins_id integer references assassins (id), contract_id integer references contracts (id) ON DELETE CASCADE);
 INSERT INTO assassins_contracts (assassins_id, contract_id)
 VALUES
 (6, 1),
@@ -93,6 +93,8 @@ SELECT SUM(price) FROM assassins;
 SELECT COUNT(*) FROM assassins_contracts;
 
 --Find the lowest total cost to complete all assigned contracts.
+SELECT SUM(budget) FROM contracts;
+
 
 --Add a new contract: Snake Plissken, New York, (find a photo), security 5, budget 35, Client is Marcellus Wallace.
 INSERT INTO targets (id, target_name, target_location, target_photo, target_security)
@@ -105,6 +107,7 @@ VALUES
 
 --Assign all assassins with a rate lower than the cost of the new contract to the new contract.
 
+
 --Complete these contracts:
 --The Jaguar, by the Jackal
 UPDATE contracts SET completed = TRUE, assassins_id = 1 WHERE target_id = 2;
@@ -112,13 +115,40 @@ UPDATE assassins SET kills = kills+1 WHERE id = 1;
 
 --Butch Coolidge, by Ghost Dog
 UPDATE contracts SET completed = TRUE, assassins_id = 3 WHERE target_id = 1;
-UPDATE assassins SET kills = kills+1 WHERE id = 3;
+UPDATE assassins SET kills = kills + 1 WHERE id = 3;
 
 --Snake Plissken, by Nikita Mears
 UPDATE contracts SET completed = TRUE, assassins_id = 8 WHERE target_id = 6;
-UPDATE assassins SET kills = kills+1 WHERE id = 8;
+UPDATE assassins SET kills = kills + 1 WHERE id = 8;
 
---Select all the completed contracts, showing only the assassins to be paid, and the amount paid to them. Then show the total cost of the completed contracts.
+--Select all the completed contracts, showing only the assassins to be paid, and the amount paid to them.
+SELECT assassins.full_name, contracts.budget AS payment
+FROM assassins, contracts
+WHERE assassins.id = contracts.assassins_id;
+
+-- Show the total cost of the completed contracts.
+SELECT SUM(budget) AS paid FROM assassins INNER JOIN contracts ON (assassins.id = contracts.assassins_id);
+
+--The Jackal has retired. Remove him from the database.
+--Alter assassis table to now have a retired column
+ALTER TABLE assassins ADD COLUMN retired_assassins boolean;
+--Update table to set all assassins to false
+UPDATE assassins SET retired_assassins = FALSE;
+--Update table to retire The Jackal
+UPDATE assassins SET retired_assassins = TRUE WHERE id = 1;
+
+--Ghost Dog and Nikita Mears have increased their rates by 5 and 10, respectively.
+--Update rating for Ghost Dog
+UPDATE assassins SET rating = rating + 5 WHERE id = 3;
+--UpdATE rating for Nikita Mears
+UPDATE assassins SET rating = rating + 10 WHERE id = 8;
+
+--The contract on Norman Stansfield has been rescinded. Remove it (and any associated data) from the database.
+DELETE FROM contracts WHERE id = 3;
+
+--Winston has taken out a contract on John Wick! (Security 9, budget 100) We may have to rethink the way we're
+--structuring our data. How can we refactor our database schema to allow a person to be an assassin, a client,
+--or the target of a contract? Do that, then assign all assassins not already on a job to this new contract.
 
 
 --Show tables
